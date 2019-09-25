@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo1
+  labels:
+    name: mongo1
+spec:
+  nfs:
+    server: nfs.cyf.com
+    path: /qj/mongo/mongo1
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: "mongo"
+  capacity:
+    storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo2
+  labels:
+    name: mongo2
+spec:
+  nfs:
+    server: nfs.cyf.com
+    path: /qj/mongo/mongo2
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: "mongo"
+  capacity:
+    storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo3
+  labels:
+    name: mongo3
+spec:
+  nfs:
+    server: nfs.cyf.com
+    path: /qj/mongo/mongo3
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: "mongo"
+  capacity:
+    storage: 1Gi

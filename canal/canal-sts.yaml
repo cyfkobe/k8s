@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: canal
+  labels:
+    app: canal
+spec:
+  ports:
+  - name: client
+    port: 11111
+  clusterIP: None
+  selector:
+    app: canal
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: canal
+spec:
+  serviceName: canal
+  replicas: 2
+  selector:
+    matchLabels:
+      app: canal
+  template:
+    metadata:
+      labels:
+        app: canal
+    spec:
+      containers:
+      - name: canal
+        image: canal/canal-server:v1.1.0
+        ports:
+        - name: client
+          containerPort: 11111
+        volumeMounts:
+        - name: data
+          mountPath: /home/admin/canal-server
+          subPath: canal-server
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: "canal"
+      resources:
+        requests:
+          storage: 1Gi
+

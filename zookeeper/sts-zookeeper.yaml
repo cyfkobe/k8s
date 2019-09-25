@@ -1,0 +1,58 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: zk
+spec:
+  selector:
+    matchLabels:
+      app: zk 
+  serviceName: "zk-hs"
+  replicas: 3 
+  template:
+    metadata:
+      labels:
+        app: zk
+    spec:
+      terminationGracePeriodSeconds: 10
+      restartPolicy: Always
+      containers:
+      - name: zk
+        image: zookeeper:3.4.13
+        imagePullPolicy: IfNotPresent
+        command: 
+        - "/bin/sh"
+        - "-c"
+        - "if [ ! -f $ZOO_DATA_DIR/myid ] ; then $(echo $((${HOSTNAME##*-}+1)) > $ZOO_DATA_DIR/myid); fi && /docker-entrypoint.sh zkServer.sh start-foreground" 
+        readinessProbe:
+          tcpSocket:
+            port: 2181
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 2181
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        ports:
+        - name: client 
+          containerPort: 2181
+        - name: server
+          containerPort: 2888
+        - name: leader-election
+          containerPort: 3888
+        env:
+        - name: ZOO_SERVERS
+          value: server.1=zk-0.zk-hs:2888:3888 server.2=zk-1.zk-hs:2888:3888 server.3=zk-2.zk-hs:2888:3888
+        volumeMounts:
+        - name: data
+          mountPath: /data
+          subPath: data
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      storageClassName: "zk"
+      accessModes: [ ReadWriteOnce ]
+      resources:
+        requests:
+          storage: 1Gi

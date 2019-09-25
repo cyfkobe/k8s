@@ -1,0 +1,50 @@
+image: gitlab/gitlab-runner:alpine
+imagePullPolicy: IfNotPresent
+gitlabUrl: http://192.168.10.24/
+runnerRegistrationToken: z7Wj1V4ExAEPxAqq_UzW
+# runnerToken:
+# unregisterRunners: true
+terminationGracePeriodSeconds: 3600
+concurrent: 5
+checkInterval: 0
+rbac:
+  create: true
+  clusterWideAccess: false
+  # serviceAccountName: default
+metrics:
+  enabled: true
+runners:
+  image: ubuntu:18.04
+  #imagePullSecrets: []
+  tags: k8s
+  privileged: true
+  namespace: gitlab
+  builds: 
+    cpuLimit: 2000m
+    memoryLimit: 1024Mi
+    cpuRequests: 100m
+    memoryRequests: 128Mi
+  services: 
+    cpuLimit: 2000m
+    memoryLimit: 1024Mi
+    cpuRequests: 100m
+    memoryRequests: 128Mi
+  helpers: 
+    cpuLimit: 2000m
+    memoryLimit: 1024Mi
+    cpuRequests: 100m
+    memoryRequests: 128Mi
+  nodeSelector:
+    runner: gitlab-runner-only
+nodeSelector:
+  runner: gitlab-runner-only
+tolerations:
+- key: "runner"
+  operator: "Exists"  
+resources:
+  limits:
+    memory: 1024Mi
+    cpu: 2000m
+  requests:
+    memory: 128Mi
+    cpu: 100m                                          

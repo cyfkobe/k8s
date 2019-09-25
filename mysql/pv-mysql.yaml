@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql1
+  labels:
+    name: mysql1
+spec:
+  nfs:
+    server: nfs.cyf.com
+    path: /qj/mysql/mysql1
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: "mysql"
+  capacity:
+    storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql2
+  labels:
+    name: mysql2
+spec:
+  nfs:
+    server: nfs.cyf.com
+    path: /qj/mysql/mysql2
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: "mysql"
+  capacity:
+    storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql3
+  labels:
+    name: mysql3
+spec:
+  nfs:
+    server: nfs.cyf.com
+    path: /qj/mysql/mysql3
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: "mysql"
+  capacity:
+    storage: 1Gi

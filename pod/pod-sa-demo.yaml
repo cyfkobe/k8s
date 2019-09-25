@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: myapp-sa-deploy
+  namespace: default
+  labels:
+    deploy: myapp-sa-deploy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp-sa
+  template:
+    metadata:
+      name: myapp-sa
+      namespace: default
+      labels:
+        app: myapp-sa
+    spec:
+      containers:
+      - name: myapp-sa
+        image: cuiyf/myapp
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 80
+      serviceAccountName: admin #使用自定义sa账号

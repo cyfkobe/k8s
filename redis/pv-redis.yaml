@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis1
+  labels:
+    name: redis1
+spec:
+  nfs:
+    server: nfs.cyf.com
+    path: /qj/redis/redis1
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: "redis"
+  capacity:
+    storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis2
+  labels:
+    name: redis2
+spec:
+  nfs:
+    server: nfs.cyf.com
+    path: /qj/redis/redis2
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: "redis"
+  capacity:
+    storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis3
+  labels:
+    name: redis3
+spec:
+  nfs:
+    server: nfs.cyf.com
+    path: /qj/redis/redis3
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: "redis"
+  capacity:
+    storage: 1Gi

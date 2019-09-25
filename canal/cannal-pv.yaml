@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: canal1
+  labels:
+    name: canal1
+spec:
+  nfs:
+    server: nfs.cyf.com
+    path: /qj/canal/canal1
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: "canal"
+  capacity:
+    storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: canal2
+  labels:
+    name: canal2
+spec:
+  nfs:
+    server: nfs.cyf.com
+    path: /qj/canal/canal2
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: "canal"
+  capacity:
+    storage: 1Gi
+

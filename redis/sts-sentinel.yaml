@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentinel
+  labels: 
+    app: sentinel
+spec:
+  selector:
+    app: sentinel
+  ports:
+  - name: sentinel
+    port: 26379
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sentinel
+spec:
+  selector:
+    matchLabels:
+      app: sentinel
+  serviceName: sentinel
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: sentinel
+    spec:
+      initContainers:
+      - name: init-redis
+        image: redis:5.0
+        command:
+        - bash
+        - "-c"
+        - |
+          cp /mnt/config-map/sentinel.conf /mnt/conf/sentinel.conf
+        volumeMounts:
+        - name: conf
+          mountPath: /mnt/conf
+        - name: config-map
+          mountPath: /mnt/config-map
+      containers:
+      - name: sentinel
+        image: redis:5.0
+        command: ["/bin/sh"]
+        args: ["-c", "redis-sentinel /data/conf/sentinel.conf"]
+        ports:
+        - name: http
+          containerPort: 26379
+        volumeMounts:
+        - name: conf
+          mountPath: /data/conf
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: conf
+        emptyDir: {}
+      - name: config-map
+        configMap:
+          name: sentinel-conf
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: "sentinel"
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sentinel-conf
+data:
+  sentinel.conf: |
+    daemonize no
+    port 26379
+    dir "/data"
+    sentinel monitor mymaster redis-0.redis 16379 2
+    sentinel down-after-milliseconds mymaster 10000
+    sentinel auth-pass mymaster 123456
+    sentinel config-epoch mymaster 0
+    sentinel leader-epoch mymaster 0

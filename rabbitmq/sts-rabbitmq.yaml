@@ -39,27 +39,27 @@ spec:
                   touch /notget
                 fi;
         ports:
-          - name: queue-port
-            containerPort: 5672
-          - name: management-port
-            containerPort: 15672
-          - name: cluster-port
-            containerPort: 4369
-          - name: dist-port
-            containerPort: 25672
+        - name: queue-port
+          containerPort: 5672
+        - name: management-port
+          containerPort: 15672
+        - name: cluster-port
+          containerPort: 4369
+        - name: dist-port
+          containerPort: 25672
         env:
-          - name: RABBITMQ_DEFAULT_USER
-            value: admin
-          - name: RABBITMQ_DEFAULT_PASS
-            value: admin
-          - name: RABBITMQ_ERLANG_COOKIE
-            value: "mqcluster"
-          - name: MY_POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: RABBITMQ_NODENAME
-            value: rabbit@$(MY_POD_NAME)
+        - name: RABBITMQ_DEFAULT_USER
+          value: admin
+        - name: RABBITMQ_DEFAULT_PASS
+          value: admin
+        - name: RABBITMQ_ERLANG_COOKIE
+          value: "mqcluster"
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: RABBITMQ_NODENAME
+          value: rabbit@$(MY_POD_NAME)
         volumeMounts:
         - name: data
           mountPath: /var/lib/rabbitmq

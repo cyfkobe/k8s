@@ -59,7 +59,9 @@ spec:
         image: mysql:5.7
         env:
         - name: MYSQL_ALLOW_EMPTY_PASSWORD
-          value: "1"
+          value: "true"
+        #- name: MYSQL_ROOT_PASSWORD
+        #  value: "123456"
         ports:
         - name: mysql
           containerPort: 3306

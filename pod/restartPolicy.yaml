@@ -15,8 +15,6 @@ spec:
       name: myapp
       labels:
         app: myapp
-      annotations:
-        kubernetes.io/maxRetriesForOnFailurePolicy: "3"
     spec:
       containers:
       - name: myapp
@@ -25,5 +23,3 @@ spec:
         ports:
         - name: http
           containerPort: 80
-      restartPolicy: OnFailure
-      maxRetries: 3

@@ -24,8 +24,10 @@ spec:
         imagePullPolicy: IfNotPresent
         command:
         - /heapster
-        - --source=kubernetes:https://kubernetes.default
-        - --sink=influxdb:http://monitoring-influxdb.kube-system.svc:8086
+        #- --source=kubernetes:https://kubernetes.default 
+        - --source=kubernetes.summary_api:https://kubernetes.default.svc?kubeletHttps=true&kubeletPort=10250&insecure=true 
+        - --sink=influxdb:http://monitoring-influxdb.kube-system.svc:8086?withfields=true&db=k8s
+        - --metric-resolution=30s
 ---
 apiVersion: v1
 kind: Service
@@ -44,3 +46,47 @@ spec:
     targetPort: 8082
   selector:
     k8s-app: heapster
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: heapster
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: heapster
+subjects:
+- kind: ServiceAccount
+  name: heapster
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: heapster
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - nodes
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - extensions
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - nodes/stats
+  verbs:
+  - get

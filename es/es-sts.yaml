@@ -1,3 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: es-tansport
+  labels:
+    app: es
+spec:
+  ports:
+  - name: transport
+    port: 9300
+  clusterIP: None
+  selector:
+    app: es
+---
+apiVersion: v1
+kind: Service
+metadata:  
+  name: es-http
+  labels:  
+    app: es
+spec:      
+  type: NodePort
+  ports:   
+  - name: http
+    port: 9200
+    targetPort: 9200
+    nodePort: 30010
+  selector:
+    app: es
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -28,33 +58,61 @@ spec:
         - name: transport
           containerPort: 9300
         env:
-        - name: NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: CLUSTER_NAME
-          value: "elasticsearch"
-        - name: NUMBER_OF_MASTERS
-          value: "2"
-        - name: HTTP_CORS_ALLOW_ORIGIN
-          value: "*"
-        - name: HTTP_CORS_ENABLE
-          value: "false"
-        - name: NETWORK_HOST
-          value: "0.0.0.0"
-        - name: MAX_LOCAL_STORAGE_NODES
-          value: "1"
-        - name: NODE_MASTER
-          value: "true"
-        - name: NODE_INGEST
-          value: "false"
-        - name: NODE_DATA
-          value: "false"
-        - name: HTTP_ENABLE
-          value: "false"
         - name: ES_JAVA_OPTS
           value: -Xms1024m -Xmx1024m
+        volumeMounts:
+        - name: data
+          mountPath: /usr/share/elasticsearch/data
+        - name: conf
+          mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+          subPath: elasticsearch.yml
+        readinessProbe:
+          failureThreshold: 3       
+          successThreshold: 1
+          httpGet:
+            scheme: HTTP
+            path: /_cluster/health?local=true
+            port: 9200
+          initialDelaySeconds: 20
+          periodSeconds: 10         
+          timeoutSeconds: 5
+        livenessProbe:              
+          failureThreshold: 3       
+          successThreshold: 1       
+          httpGet:
+            scheme: HTTP
+            path: /_cluster/health?local=true
+            port: 9200            
+          initialDelaySeconds: 20   
+          periodSeconds: 10         
+          timeoutSeconds: 5
+      volumes:
+      - name: conf
+        configMap:
+          name: es-conf
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      storageClassName: "es"
+      accessModes: [ ReadWriteOnce ]
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: es-conf
+data:
+  elasticsearch.yml: |
+    cluster.name: elasticsearch
+    node.name: ${HOSTNAME}
+    node.master: true 
+    node.data: true
+    network.host: "0.0.0.0"
+    http.cors.enabled: true
+    http.cors.allow-origin: "*"
+    discovery.zen.ping.unicast.hosts: es-tansport
+    discovery.zen.minimum_master_nodes: 1
+    indices.query.bool.max_clause_count: 10000       

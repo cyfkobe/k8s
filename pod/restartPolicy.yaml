@@ -16,6 +16,7 @@ spec:
       labels:
         app: myapp
     spec:
+      restartPolicy: OnFailure    
       containers:
       - name: myapp
         image: cuiyf/myapp

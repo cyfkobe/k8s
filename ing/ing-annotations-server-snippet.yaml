@@ -10,7 +10,6 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-#    nginx.ingress.kubernetes.io/server-snippet: |
 spec:
   rules:
   - host: myapp.cyf.com
@@ -62,5 +61,3 @@ spec:
         ports:
         - name: http
           containerPort: 80
-
-

@@ -42,3 +42,4 @@ spec:
   storageClassName: "zk"
   capacity:
     storage: 1Gi
+

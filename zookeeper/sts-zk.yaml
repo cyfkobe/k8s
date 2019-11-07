@@ -19,10 +19,6 @@ spec:
       - name: zk
         image: zookeeper:3.4.13
         imagePullPolicy: IfNotPresent
-        command: 
-        - "/bin/sh"
-        - "-c"
-        - "if [ ! -f $ZOO_DATA_DIR/myid ] ; then $(echo $((${HOSTNAME##*-}+1)) > $ZOO_DATA_DIR/myid); fi && /docker-entrypoint.sh zkServer.sh start-foreground" 
         readinessProbe:
           tcpSocket:
             port: 2181
@@ -41,6 +37,8 @@ spec:
         - name: leader-election
           containerPort: 3888
         env:
+        - name: ZOO_MY_ID
+          value: 
         - name: ZOO_SERVERS
           value: server.1=zk-0.zk-hs:2888:3888 server.2=zk-1.zk-hs:2888:3888 server.3=zk-2.zk-hs:2888:3888
         volumeMounts:

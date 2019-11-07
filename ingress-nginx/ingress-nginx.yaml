@@ -71,7 +71,7 @@ metadata:
 data:
   access-log-path: "/var/log/nginx/access.log"
   error-log-path: "/var/log/nginx/error.log"
-  log-format-upstream: '{ "@timestamp": "$time_iso8601", "@fields": {"remote_addr": "$remote_addr","remote_user": "$remote_user","body_bytes_sent": "$body_bytes_sent", "request_time": "$request_time", "status": "$status", "request": "$request", "request_method": "$request_method", "http_referrer": "$http_referer", "http_x_forwarded_for": "$http_x_forwarded_for", "http_user_agent": "$http_user_agent" } }'
+  log-format-upstream: '{ "@timestamp": "$time_iso8601", "@fields": {"remote_addr": "$remote_addr","remote_user": "$remote_user", "request": "$request", "body_bytes_sent": "$body_bytes_sent", "request_time": "$request_time", "status": "$status", "request_method": "$request_method", "uri": "$uri", "host": "$host", "http_referrer": "$http_referer", "http_x_forwarded_for": "$http_x_forwarded_for", "http_user_agent": "$http_user_agent","upstream_response_time": "$upstream_response_time","upstream_addr": "$upstream_addr" } }'
 ---
 kind: ConfigMap
 apiVersion: v1

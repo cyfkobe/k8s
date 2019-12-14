@@ -8,10 +8,12 @@ metadata:
   annotations:
     prometheus.io/scrape: 'true'
 spec:
+  type: NodePort
   ports:
   - name: http-metrics
     port: 8080
     targetPort: http-metrics
+    nodePort: 30800
     protocol: TCP
   - name: telemetry
     port: 8081

@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-affinity
+  labels:
+    app: pod-affinity
+spec:
+  containers:
+  - name: pod-affinity
+    image: cuiyf/myapp
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - topologyKey: kubernetes.io/hostname 
+        labelSelector:
+          matchExpressions:
+          - key: type
+            operator: In
+            values:
+            - java
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        podAffinityTerm:
+          topologyKey: kubernetes.io/hostname   
+          labelSelector:
+            matchExpressions:
+            - key: type
+              operator: NotIn
+              values:
+              - web
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: a
+  labels:
+    app: a
+    type: web
+spec:
+  containers:
+  - name: a
+    image: cuiyf/myapp
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: b
+  labels:
+    app: b
+    type: java
+spec:
+  containers:
+  - name: b
+    image: cuiyf/myapp
+

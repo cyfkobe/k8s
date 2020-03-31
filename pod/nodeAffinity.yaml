@@ -19,22 +19,21 @@ spec:
     spec:
       affinity:
         nodeAffinity:
-          #requiredDuringSchedulingIgnoredDuringExecution:
-          #  nodeSelectorTerms:
-          #  - matchExpressions:
-          #    - key: kubernetes.io/hostname
-          #      operator: In
-          #      values:
-          #      - node1
-          #      - node2
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: NotIn
+                values:
+                - node1
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 1
             preference:
               matchExpressions:
-              - key: environment
+              - key: kubernetes.io/hostname
                 operator: In
                 values:
-                - test
+                - node2
       containers:
       - name: myapp
         image: cuiyf/myapp

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+  namespace: default
+  labels:
+    deploy: myapp
+spec:
+  replicas: 6
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      name: myapp
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: cuiyf/myapp
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 80
+        readinessProbe:             
+          successThreshold: 1
+          failureThreshold: 5
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 30
+        livenessProbe:              
+          failureThreshold: 5      
+          successThreshold: 1       
+          tcpSocket:
+            port: 80            
+          initialDelaySeconds: 30
+          periodSeconds: 10         
+          timeoutSeconds: 30
+
